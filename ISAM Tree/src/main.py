@@ -21,7 +21,7 @@ folha_E = no_E.filhos[0]
 folha_F = no_F.filhos[0]
 
 print("raiz:")
-print(" ", raiz.chaves)
+print(raiz.chaves)
 
 print("\nnível intermediário 1:")
 print(no_esq.chaves)
