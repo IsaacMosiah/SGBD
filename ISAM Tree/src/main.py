@@ -1,7 +1,9 @@
 from ISAM import ISAM
 
+# montar árvore padrão
 arvore = ISAM()
 
+# extrair os nós para exibir 
 raiz = arvore.raiz
 no_esq = raiz.filhos[0]
 no_dir = raiz.filhos[1]
@@ -20,25 +22,19 @@ folha_D = no_D.filhos[0]
 folha_E = no_E.filhos[0]
 folha_F = no_F.filhos[0]
 
+# exibição dos nós
 print("raiz:")
 print(raiz.chaves)
 
-print("\nnível intermediário 1:")
-print(no_esq.chaves)
-print(no_dir.chaves)
+print("nível intermediário 1:")
+print(no_esq.chaves, no_dir.chaves)
 
-print("\nnível intermediário 2:")
-print(no_A.chaves)
-print(no_B.chaves)
-print(no_C.chaves)
-print(no_D.chaves)
-print(no_E.chaves)
-print(no_F.chaves)
+print("nível intermediário 2:")
+print(no_A.chaves, no_B.chaves, no_C.chaves, no_D.chaves, no_E.chaves, no_F.chaves)
 
-print("\npáginas folha primárias:")
-print(folha_A.registros)
-print(folha_B.registros)
-print(folha_C.registros)
-print(folha_D.registros)
-print(folha_E.registros)
-print(folha_F.registros)
+print("páginas folha primárias:")
+print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
+
+# testar métricas
+print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
+print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())

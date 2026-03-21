@@ -54,3 +54,24 @@ class ISAM:
         self.raiz = NoIndice()
         self.raiz.chaves = [40]
         self.raiz.filhos = [no_esq, no_dir]
+        
+    def quantidade_paginas_folha(self):
+        qtd = 0
+        for no in self.raiz.filhos:
+            for no2 in no.filhos:
+                for no3 in no2.filhos:
+                    if isinstance(no3, PaginaPrimaria):
+                        qtd += 1 
+        return qtd
+    
+    def quantidade_paginas_overflow(self):
+        qtd = 0
+        for no in self.raiz.filhos:
+            for no2 in no.filhos:
+                for no3 in no2.filhos:
+                    if isinstance(no3, PaginaPrimaria):
+                        if no3.overflow is not None:
+                            qtd += 1
+                        else:
+                            qtd += 0
+        return qtd
