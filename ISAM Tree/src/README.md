@@ -27,13 +27,13 @@ Além da implementação, o grupo deverá analisar o comportamento da estrutura 
 ## 3. Estrutura inicial de índices
 Para padronizar a atividade, todos os grupos deverão iniciar a simulação a partir de uma estrutura de índice já definida, com dois níveis de nós intermediários acima das páginas folha. As chaves abaixo devem ser adotadas como separadores iniciais do índice.
 
-![readme-IsamStrcuture](img/rdm-isamStructure.png)
+![readme-IsamStrcuture](../img/rdm-isamStructure.png)
 Interpretação esperada:
 
 A raiz separa a busca em dois grandes ramos por meio da chave 40. No nível intermediário seguinte, os nós 20, 33 e 51, 63 refinam a navegação. No segundo nível intermediário, cada nó aponta para uma página folha primária específica, que inicialmente contém dois registros ordenados. A partir dessa configuração, novas inserções deverão ser direcionadas à folha correspondente; quando a folha estiver cheia, o grupo deverá utilizar páginas de overflow.
 ## 4. Operações Obrigatórias
 
-![readme-IsamOps](img/rdm-mandatoryOps.png)
+![readme-IsamOps](../img/rdm-mandatoryOps.png)
 ## 5. Exemplo Prático de Entradas de Registros
 Considere a configuração inicial apresentada na seção anterior e suponha a inserção dos seguintes registros adicionais: 23, 48, 41 e 42. A chave 23 deve ser direcionada à folha primária [20, 27]. Como essa folha já está ocupada, o registro deverá ser armazenado em uma página de overflow associada a ela. De forma análoga, as chaves 48, 41 e 42 pertencem à região da folha [40, 46]; como a folha também está cheia, esses novos registros passarão a compor uma cadeia de overflow dessa mesma folha. Esse processo ilustra a característica central do ISAM: a estrutura principal do índice permanece estática, enquanto as atualizações passam a ser absorvidas nas folhas e em páginas de overflow.
 ## 6. Requisitos de Modelagem
