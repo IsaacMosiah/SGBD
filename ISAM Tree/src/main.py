@@ -38,3 +38,21 @@ print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros
 # testar métricas
 print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
 print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
+
+# adiconar registro
+arvore.adicionar_registro(18)
+arvore.adicionar_registro(22)
+arvore.adicionar_registro(27)
+arvore.adicionar_registro(35)
+
+
+# exibição de nós
+print("páginas folha primárias:")
+print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
+
+print("páginas overflow:")
+print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.registros)
+
+# testar métricas após inserção
+print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
+print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
