@@ -54,6 +54,21 @@ class ISAM:
         self.raiz = NoIndice()
         self.raiz.chaves = [40]
         self.raiz.filhos = [no_esq, no_dir]
+
+    def buscar_no(self, reg):
+        no = self.raiz
+
+        while len(no.filhos) != 0:
+            i = self.get_filho(no.chaves, reg)
+            no = no.filhos(i)
+
+        return no
+    
+    def get_filho(chaves, reg):
+        for i in range(chaves):
+            if reg < chaves[i]:
+                return i
+        return len(chaves)
         
     def quantidade_paginas_folha(self):
         qtd = 0
