@@ -94,7 +94,16 @@ class ISAM:
             for no2 in no.filhos:
                 if isinstance(no2, PaginaPrimaria):
                     if no2.overflow is not None:
+                        ovflw = no2.overflow
                         qtd += 1
+                        # checa páginas de overflow linkadas e adiciona a contagem
+                        while True:
+                            if ovflw.proximo is not None:
+                                qtd += 1
+                                ovflw = ovflw.proximo
+                            else:
+                                break
+
                     else:
                         qtd += 0
         return qtd
