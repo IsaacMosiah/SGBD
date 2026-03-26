@@ -36,7 +36,6 @@ class ISAM:
 
     def adicionar_registro(self, rec):
         no = self.buscar_no(rec)
-        no = no.filhos[0]
 
         if len(no.registros) == no.CAPACIDADE: # página folha lotada
             if not no.overflow: #não há overflow
@@ -56,19 +55,20 @@ class ISAM:
                     # se não tem espaço, verifica se há outro nó de overflow
                     if not ovflw.proximo:
                         break
-                    ovflw = ovflw.proximo
+                    else:
+                        ovflw = ovflw.proximo
 
                 new_ovflw = PaginaOverflow()
                 new_ovflw.registros.append(rec)
                 ovflw.proximo = new_ovflw
 
         else:   #ainda tem espaço na página folha
-            no.chaves.append(rec)
+            no.registros.append(rec)
 
     def buscar_no(self, rec):
         no = self.raiz
 
-        while len(no.filhos) > 1:
+        while type(no) != PaginaPrimaria:
             i = self.get_filho(no.chaves, rec)
             no = no.filhos[i]
 
