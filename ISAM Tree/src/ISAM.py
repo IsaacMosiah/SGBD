@@ -65,10 +65,59 @@ class ISAM:
         else:   #ainda tem espaço na página folha
             no.registros.append(rec)
 
+    def remover_registro(self, rec):
+        # faz o caminho para onde o registro deveria estar
+        no = self.buscar_no(rec)
+
+        if rec in no.registros:
+            i = no.registros.index(rec)
+            no.registros.pop(i)
+
+        elif no.overflow is not None:
+            ovflw = no.overflow
+            # se o registro não está no no, deve estar nas folhas de overflow
+            while True:
+                if rec in ovflw.registros:
+                    i = ovflw.registros.index(rec)
+                    ovflw.registros.pop(i)
+
+                    # se a pagina overflow ficou vazia, vamos excluí-la
+                    if len(ovflw.registros) == 0:
+                        ovflw.registros.append('x') # marcamos a página a ser excluída
+                        prev_ovflw = self.buscar_no(rec)
+                        if 'x' in prev_ovflw.overflow.registros: # se a primeira página overflow contém o marcador
+                            prev_ovflw.overflow = None
+                            break
+
+                        # se não, vamos entrar nas páginas encadeadas procurando o marcador
+                        prev_ovflw = prev_ovflw.overflow
+                        while True:
+                            if 'x' in prev_ovflw.proximo.registros: # se a proxima página overflow contém o marcador
+                                if prev_ovflw.proximo.proximo is not None: # se há uma página de overflow após a página com marcador
+                                    prev_ovflw.proximo = prev_ovflw.proximo.proximo # 'pulamos' a página marcada
+                                    break
+                                else:
+                                    prev_ovflw.proximo = None
+                                    break
+                            elif prev_ovflw.proximo is not None:
+                                prev_ovflw = prev_ovflw.proximo
+                            else:
+                                break
+                            
+                    break
+                elif ovflw.proximo is not None:
+                    ovflw = ovflw.proximo
+                else:
+                    print("Registro não está presente na árvore")
+                    return
+
+        print("Registro removido.")
+        return
+
     def buscar_no(self, rec):
         no = self.raiz
 
-        while type(no) != PaginaPrimaria:
+        while not isinstance(no, PaginaPrimaria):
             i = self.get_filho(no.chaves, rec)
             no = no.filhos[i]
 
@@ -76,7 +125,7 @@ class ISAM:
     
     def get_filho(self, chaves, rec):
         for i in range(len(chaves)):
-            if rec < chaves[i]:
+            if rec <= chaves[i]:
                 return i
         return len(chaves)
         

@@ -30,7 +30,7 @@ print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros
 print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
 print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
 
-# adiconar registro
+# teste de adiconar registro
 arvore.adicionar_registro(18)
 arvore.adicionar_registro(22)
 arvore.adicionar_registro(27)
@@ -49,7 +49,7 @@ print("páginas folha primárias:")
 print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
 
 print("páginas overflow:")  # --- PRECISA MELHORAR ISSO AQUI --
-print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.registros, folha_D.overflow.registros, folha_E.overflow, folha_F.overflow.registros, folha_F.overflow.proximo.registros, folha_F.overflow.proximo.proximo.registros)
+print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.registros, folha_D.overflow.registros, folha_E.overflow.registros, folha_F.overflow.registros, folha_F.overflow.proximo.registros, folha_F.overflow.proximo.proximo.registros)
 
 # testar métricas após inserção
 print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
@@ -59,5 +59,44 @@ print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow
 print("\nbusca por igualdade:")
 print(arvore.busca_por_igualdade(18))
 print(arvore.busca_por_igualdade(22))
+print(arvore.busca_por_igualdade(145))
+print("\nbusca por intervalo:")
+print(arvore.busca_por_intervalo(27, 44))
+
+# teste de remover registros
+arvore.remover_registro(86)
+arvore.remover_registro(121)
+arvore.remover_registro(200)
+
+# exibição de nós
+print("páginas folha primárias:")
+print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
+
+print("páginas overflow:")  # --- PRECISA MELHORAR ISSO AQUI --
+print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.registros, folha_D.overflow.registros, folha_E.overflow, folha_F.overflow.registros, folha_F.overflow.proximo.registros, folha_F.overflow.proximo.proximo)
+
+# testar métricas após remoção
+print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
+print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
+
+# adicionar registro após exclusão
+arvore.adicionar_registro(145)
+
+# exibição de nós
+print("páginas folha primárias:")
+print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
+
+print("páginas overflow:")  # --- PRECISA MELHORAR ISSO AQUI --
+print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.registros, folha_D.overflow.registros, folha_E.overflow, folha_F.overflow.registros, folha_F.overflow.proximo.registros, folha_F.overflow.proximo.proximo)
+
+# testar métricas após remoção
+print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
+print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
+
+# testes de busca após remoção
+print("\nbusca por igualdade:")
+print(arvore.busca_por_igualdade(18))
+print(arvore.busca_por_igualdade(22))
+print(arvore.busca_por_igualdade(145))
 print("\nbusca por intervalo:")
 print(arvore.busca_por_intervalo(27, 44))
