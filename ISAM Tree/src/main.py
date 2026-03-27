@@ -54,3 +54,10 @@ print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.r
 # testar métricas após inserção
 print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
 print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
+
+# testes de busca 
+print("\nbusca por igualdade:")
+print(arvore.busca_por_igualdade(18))
+print(arvore.busca_por_igualdade(22))
+print("\nbusca por intervalo:")
+print(arvore.busca_por_intervalo(27, 44))

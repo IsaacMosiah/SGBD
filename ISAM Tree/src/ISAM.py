@@ -107,3 +107,47 @@ class ISAM:
                     else:
                         qtd += 0
         return qtd
+
+    def busca_por_igualdade(self, rec):
+        no = self.raiz
+        ordem = []
+
+        while not isinstance(no, PaginaPrimaria):
+            ordem.append(list(no.chaves))
+            filho = self.get_filho(no.chaves, rec)
+            no = no.filhos[filho]
+
+        ordem.append(list(no.registros))
+        if rec in no.registros:
+            return True, ordem
+        
+        ovflw = no.overflow
+
+        while ovflw is not None:
+            ordem.append(list(ovflw.registros))
+            if rec in ovflw.registros:
+                return True, ordem
+            ovflw = ovflw.proximo
+
+        return False, ordem    
+
+
+    def busca_por_intervalo(self, rec_ini, rec_fim):
+        resultados = []
+        for no in self.raiz.filhos:
+            for no2 in no.filhos:
+                if isinstance(no2, PaginaPrimaria):
+                    for rec in no2.registros:
+                        if rec_ini <= rec <= rec_fim:
+                            resultados.append(rec)
+                    if no2.overflow is not None:
+                        ovflw = no2.overflow
+                        while True:
+                            for rec in ovflw.registros:
+                                if rec_ini <= rec <= rec_fim:
+                                    resultados.append(rec)
+                            if ovflw.proximo is not None:
+                                ovflw = ovflw.proximo
+                            else:
+                                break
+        return resultados
