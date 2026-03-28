@@ -156,25 +156,29 @@ class ISAM:
     def busca_por_igualdade(self, rec):
         no = self.raiz
         ordem = []
+        quant = 0
 
         while not isinstance(no, PaginaPrimaria):
             ordem.append(list(no.chaves))
+            quant += 1
             filho = self.get_filho(no.chaves, rec)
             no = no.filhos[filho]
 
         ordem.append(list(no.registros))
+        quant += 1
         if rec in no.registros:
-            return True, ordem
+            return True, quant, ordem
         
         ovflw = no.overflow
 
         while ovflw is not None:
             ordem.append(list(ovflw.registros))
+            quant += 1
             if rec in ovflw.registros:
-                return True, ordem
+                return True, quant, ordem
             ovflw = ovflw.proximo
 
-        return False, ordem    
+        return False, quant, ordem
 
 
     def busca_por_intervalo(self, rec_ini, rec_fim):
