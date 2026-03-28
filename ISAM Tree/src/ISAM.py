@@ -34,6 +34,23 @@ class ISAM:
         self.raiz.chaves = [40]
         self.raiz.filhos = [no_esq, no_dir]
 
+    # funções para percorrer a árvore
+    def get_filho(self, chaves, rec):
+        for i in range(len(chaves)):
+            if rec <= chaves[i]:
+                return i
+        return len(chaves)
+    
+    def buscar_no(self, rec):
+        no = self.raiz
+
+        while not isinstance(no, PaginaPrimaria):
+            i = self.get_filho(no.chaves, rec)
+            no = no.filhos[i]
+
+        return no
+    
+    # funções para adicionar e remover registros
     def adicionar_registro(self, rec):
         no = self.buscar_no(rec)
 
@@ -69,66 +86,44 @@ class ISAM:
         # faz o caminho para onde o registro deveria estar
         no = self.buscar_no(rec)
 
+        # remove o registro da página primária
         if rec in no.registros:
-            i = no.registros.index(rec)
-            no.registros.pop(i)
+            no.registros.remove(rec)
+            print("Registro removido.")
 
-        elif no.overflow is not None:
+        elif no.overflow:
             ovflw = no.overflow
-            # se o registro não está no no, deve estar nas folhas de overflow
-            while True:
+            prev = no
+
+            while ovflw:
                 if rec in ovflw.registros:
-                    i = ovflw.registros.index(rec)
-                    ovflw.registros.pop(i)
-
-                    # se a pagina overflow ficou vazia, vamos excluí-la
-                    if len(ovflw.registros) == 0:
-                        ovflw.registros.append('x') # marcamos a página a ser excluída
-                        prev_ovflw = self.buscar_no(rec)
-                        if 'x' in prev_ovflw.overflow.registros: # se a primeira página overflow contém o marcador
-                            prev_ovflw.overflow = None
-                            break
-
-                        # se não, vamos entrar nas páginas encadeadas procurando o marcador
-                        prev_ovflw = prev_ovflw.overflow
-                        while True:
-                            if 'x' in prev_ovflw.proximo.registros: # se a proxima página overflow contém o marcador
-                                if prev_ovflw.proximo.proximo is not None: # se há uma página de overflow após a página com marcador
-                                    prev_ovflw.proximo = prev_ovflw.proximo.proximo # 'pulamos' a página marcada
-                                    break
-                                else:
-                                    prev_ovflw.proximo = None
-                                    break
-                            elif prev_ovflw.proximo is not None:
-                                prev_ovflw = prev_ovflw.proximo
-                            else:
-                                break
-                            
+                    ovflw.registros.remove(rec)
                     break
-                elif ovflw.proximo is not None:
-                    ovflw = ovflw.proximo
+
+                prev = ovflw
+                ovflw = ovflw.proximo
+
+            if not ovflw:
+                print("Registro não encontrado.")
+                return
+            
+            print("Registro removido.")
+
+            # verificando se a página de overflow ficou vazia após a exclusão
+            if not ovflw.registros:
+                if isinstance(prev, PaginaPrimaria):
+                    prev.overflow = ovflw.proximo
                 else:
-                    print("Registro não está presente na árvore")
-                    return
+                    prev.proximo = ovflw.proximo
+                
+                print("Página de Overflow vazia apagada.")
+                return
+        else:
+            print("Registro não encontrado.")
 
-        print("Registro removido.")
         return
-
-    def buscar_no(self, rec):
-        no = self.raiz
-
-        while not isinstance(no, PaginaPrimaria):
-            i = self.get_filho(no.chaves, rec)
-            no = no.filhos[i]
-
-        return no
-    
-    def get_filho(self, chaves, rec):
-        for i in range(len(chaves)):
-            if rec <= chaves[i]:
-                return i
-        return len(chaves)
         
+    # funções para métricas
     def quantidade_paginas_folha(self):
         qtd = 0
         for no in self.raiz.filhos:
@@ -157,6 +152,7 @@ class ISAM:
                         qtd += 0
         return qtd
 
+    # funções de busca
     def busca_por_igualdade(self, rec):
         no = self.raiz
         ordem = []
