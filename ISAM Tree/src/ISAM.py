@@ -82,7 +82,7 @@ class ISAM:
                 ovflw.proximo = new_ovflw
                 print("Registro " + str(rec) + " adicionado em nova página de overflow.")
 
-        else:   #ainda tem espaço na página folha
+        else:
             no.registros.append(rec)
             print("Registro " + str(rec) + " adicionado em página folha primária.")
 
@@ -188,7 +188,7 @@ class ISAM:
 
     def busca_por_intervalo(self, rec_ini, rec_fim):
         resultados = []
-        quant = 0
+        quant = 1
 
         for no in self.raiz.filhos:
             quant += 1

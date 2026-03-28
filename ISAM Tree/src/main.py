@@ -48,7 +48,7 @@ def contar_ocorrencias(arvore, chave):
 	return total
 
 def percurso_intervalo_config_atual(arvore):
-	percurso = []
+	percurso = [arvore.raiz.chaves]
 	for no_intermediario in arvore.raiz.filhos:
 		percurso.append(list(no_intermediario.chaves))
 		for filho in no_intermediario.filhos:
@@ -126,7 +126,7 @@ def main():
 		custo, resultados = arvore.busca_por_intervalo(ini, fim)
 		print("- buscar_intervalo(" + str(ini) + ", " + str(fim) + "): custo=" + str(custo) + ", resultados=" + str(sorted(resultados)))
 
-	# Explicação pedida no enunciado: caminho de uma igualdade e de um intervalo.
+	# explicação pedida no enunciado: caminho de uma igualdade e de um intervalo.
 	imprimir_percurso_igualdade(arvore, 22)
 	imprimir_percurso_intervalo(arvore, 20, 50)
 
