@@ -183,8 +183,12 @@ class ISAM:
 
     def busca_por_intervalo(self, rec_ini, rec_fim):
         resultados = []
+        quant = 0
+
         for no in self.raiz.filhos:
+            quant += 1
             for no2 in no.filhos:
+                quant += 1
                 if isinstance(no2, PaginaPrimaria):
                     for rec in no2.registros:
                         if rec_ini <= rec <= rec_fim:
@@ -192,6 +196,7 @@ class ISAM:
                     if no2.overflow is not None:
                         ovflw = no2.overflow
                         while True:
+                            quant += 1
                             for rec in ovflw.registros:
                                 if rec_ini <= rec <= rec_fim:
                                     resultados.append(rec)
@@ -199,4 +204,4 @@ class ISAM:
                                 ovflw = ovflw.proximo
                             else:
                                 break
-        return resultados
+        return quant, resultados
