@@ -59,6 +59,7 @@ class ISAM:
                 new_ovflw = PaginaOverflow()
                 new_ovflw.registros.append(rec)
                 no.overflow = new_ovflw
+                print("Registro " + str(rec) + " adicionado em nova página de overflow.")
 
             # se já tem uma página de overflow, checa se tem espaço
             else:
@@ -68,19 +69,22 @@ class ISAM:
                 while True:
                     if len(ovflw.registros) < ovflw.CAPACIDADE:
                         ovflw.registros.append(rec)
+                        print("Registro " + str(rec) + " adicionado em página de overflow existente.")
                         return
                     # se não tem espaço, verifica se há outro nó de overflow
                     if not ovflw.proximo:
                         break
-                    else:
-                        ovflw = ovflw.proximo
+                    
+                    ovflw = ovflw.proximo
 
                 new_ovflw = PaginaOverflow()
                 new_ovflw.registros.append(rec)
                 ovflw.proximo = new_ovflw
+                print("Registro " + str(rec) + " adicionado em nova página de overflow.")
 
         else:   #ainda tem espaço na página folha
             no.registros.append(rec)
+            print("Registro " + str(rec) + " adicionado em página folha primária.")
 
     def remover_registro(self, rec):
         # faz o caminho para onde o registro deveria estar
@@ -89,7 +93,7 @@ class ISAM:
         # remove o registro da página primária
         if rec in no.registros:
             no.registros.remove(rec)
-            print("Registro removido.")
+            print("Registro " + str(rec) + " removido.")
 
         elif no.overflow:
             ovflw = no.overflow
@@ -104,10 +108,10 @@ class ISAM:
                 ovflw = ovflw.proximo
 
             if not ovflw:
-                print("Registro não encontrado.")
+                print("Registro " + str(rec) + " não encontrado.")
                 return
             
-            print("Registro removido.")
+            print("Registro " + str(rec) + " removido.")
 
             # verificando se a página de overflow ficou vazia após a exclusão
             if not ovflw.registros:
@@ -118,9 +122,9 @@ class ISAM:
                 
                 print("Página de Overflow vazia apagada.")
                 return
-        else:
-            print("Registro não encontrado.")
-
+            return
+        
+        print("Registro " + str(rec) + " não encontrado.")
         return
         
     # funções para métricas
