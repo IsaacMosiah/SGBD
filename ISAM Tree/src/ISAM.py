@@ -127,35 +127,6 @@ class ISAM:
         
         print("Registro " + str(rec) + " não encontrado.")
         return
-        
-    # funções para métricas
-    def quantidade_paginas_folha(self):
-        qtd = 0
-        for no in self.raiz.filhos:
-            for no2 in no.filhos:
-                if isinstance(no2, PaginaPrimaria):
-                    qtd += 1 
-        return qtd
-    
-    def quantidade_paginas_overflow(self):
-        qtd = 0
-        for no in self.raiz.filhos:
-            for no2 in no.filhos:
-                if isinstance(no2, PaginaPrimaria):
-                    if no2.overflow is not None:
-                        ovflw = no2.overflow
-                        qtd += 1
-                        # checa páginas de overflow linkadas e adiciona a contagem
-                        while True:
-                            if ovflw.proximo is not None:
-                                qtd += 1
-                                ovflw = ovflw.proximo
-                            else:
-                                break
-
-                    else:
-                        qtd += 0
-        return qtd
 
     # funções de busca
     def busca_por_igualdade(self, rec):
@@ -210,3 +181,70 @@ class ISAM:
                             else:
                                 break
         return quant, resultados
+    
+    # funções para métricas
+    def quantidade_paginas_folha(self):
+        qtd = 0
+        for no in self.raiz.filhos:
+            for no2 in no.filhos:
+                if isinstance(no2, PaginaPrimaria):
+                    qtd += 1 
+        return qtd
+    
+    def quantidade_paginas_overflow(self):
+        qtd = 0
+        for no in self.raiz.filhos:
+            for no2 in no.filhos:
+                if isinstance(no2, PaginaPrimaria):
+                    if no2.overflow is not None:
+                        ovflw = no2.overflow
+                        qtd += 1
+                        # checa páginas de overflow linkadas e adiciona a contagem
+                        while True:
+                            if ovflw.proximo is not None:
+                                qtd += 1
+                                ovflw = ovflw.proximo
+                            else:
+                                break
+
+                    else:
+                        qtd += 0
+        return qtd
+
+    def media_cadeias_overflow(self):
+        comprimentos = []
+        for no_intermediario in self.raiz.filhos:
+            for filho in no_intermediario.filhos:
+                if isinstance(filho, PaginaPrimaria):
+                    tamanho = 0
+                    ovflw = filho.overflow
+                    while ovflw is not None:
+                        tamanho += 1
+                        ovflw = ovflw.proximo
+                    comprimentos.append(tamanho)
+
+        folhas_com_overflow = [c for c in comprimentos if c > 0]
+
+        if not comprimentos:
+            return 0, 0
+
+        media_todas = sum(comprimentos)/len(comprimentos)
+        
+        if folhas_com_overflow:
+            media_com_overflow = sum(folhas_com_overflow)/len(folhas_com_overflow)
+        else:
+            media_com_overflow = 0
+
+        return media_todas, media_com_overflow
+
+    def contar_ocorrencias(self, chave):
+        total = 0
+        for no_intermediario in self.raiz.filhos:
+            for filho in no_intermediario.filhos:
+                if isinstance(filho, PaginaPrimaria):
+                    total += filho.registros.count(chave)
+                    ovflw = filho.overflow
+                    while ovflw is not None:
+                        total += ovflw.registros.count(chave)
+                        ovflw = ovflw.proximo
+        return total
