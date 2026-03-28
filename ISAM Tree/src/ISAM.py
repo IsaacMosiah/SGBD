@@ -94,6 +94,7 @@ class ISAM:
         if rec in no.registros:
             no.registros.remove(rec)
             print("Registro " + str(rec) + " removido.")
+            return
 
         elif no.overflow:
             ovflw = no.overflow
