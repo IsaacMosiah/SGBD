@@ -1,102 +1,134 @@
 from ISAM import ISAM
+from PaginaPrimaria import PaginaPrimaria
 
-# montar árvore padrão
-arvore = ISAM()
+INSERCOES_OBRIGATORIAS = [18, 22, 27, 35, 41, 44, 63, 67, 83, 86, 121, 145]
+REMOCOES_OBRIGATORIAS = [27, 44, 67, 83, 145]
+BUSCAS_IGUALDADE = [22, 35, 44, 90]
+BUSCAS_INTERVALO = [(20, 50), (60, 90), (120, 150)]
 
-# extrair os nós para exibir 
-raiz = arvore.raiz
+def folhas_em_ordem(arvore):
+	folhas = []
+	for no_intermediario in arvore.raiz.filhos:
+		for filho in no_intermediario.filhos:
+			if isinstance(filho, PaginaPrimaria):
+				folhas.append(filho)
+	return folhas
 
-no_esq = raiz.filhos[0]
-no_dir = raiz.filhos[1]
+def descricao_overflow(folha):
+	cadeia = []
+	ovflw = folha.overflow
+	while ovflw is not None:
+		cadeia.append(list(ovflw.registros))
+		ovflw = ovflw.proximo
+	return cadeia
 
-folha_A = no_esq.filhos[0]
-folha_B = no_esq.filhos[1]
-folha_C = no_esq.filhos[2]
-folha_D = no_dir.filhos[0]
-folha_E = no_dir.filhos[1]
-folha_F = no_dir.filhos[2]
+def metricas_cadeia_overflow(arvore):
+	comprimentos = []
+	for folha in folhas_em_ordem(arvore):
+		tamanho = 0
+		ovflw = folha.overflow
+		while ovflw is not None:
+			tamanho += 1
+			ovflw = ovflw.proximo
+		comprimentos.append(tamanho)
 
-# exibição dos nós
-print("raiz:")
-print(raiz.chaves)
+	folhas_com_overflow = [x for x in comprimentos if x > 0]
+	media_todas = sum(comprimentos) / len(comprimentos)
+	media_com_overflow = 0 if not folhas_com_overflow else sum(folhas_com_overflow) / len(folhas_com_overflow)
+	return media_todas, media_com_overflow
 
-print("nível intermediário:")
-print(no_esq.chaves, no_dir.chaves)
+def contar_ocorrencias(arvore, chave):
+	total = 0
+	for folha in folhas_em_ordem(arvore):
+		total += folha.registros.count(chave)
+		ovflw = folha.overflow
+		while ovflw is not None:
+			total += ovflw.registros.count(chave)
+			ovflw = ovflw.proximo
+	return total
 
-print("páginas folha primárias:")
-print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
+def percurso_intervalo_config_atual(arvore):
+	percurso = []
+	for no_intermediario in arvore.raiz.filhos:
+		percurso.append(list(no_intermediario.chaves))
+		for filho in no_intermediario.filhos:
+			if isinstance(filho, PaginaPrimaria):
+				percurso.append(list(filho.registros))
+				ovflw = filho.overflow
+				while ovflw is not None:
+					percurso.append(list(ovflw.registros))
+					ovflw = ovflw.proximo
+	return percurso
 
-# testar métricas
-print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
-print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
+def imprimir_estado(arvore, titulo):
+	print("\n" + "=" * 70)
+	print(titulo)
+	print("=" * 70)
 
-# teste de adiconar registro
-arvore.adicionar_registro(18)
-arvore.adicionar_registro(22)
-arvore.adicionar_registro(27)
-arvore.adicionar_registro(35)
-arvore.adicionar_registro(41)
-arvore.adicionar_registro(44)
-arvore.adicionar_registro(63)
-arvore.adicionar_registro(67)
-arvore.adicionar_registro(83)
-arvore.adicionar_registro(86)
-arvore.adicionar_registro(121)
-arvore.adicionar_registro(145)
+	folhas = folhas_em_ordem(arvore)
+	for i, folha in enumerate(folhas, start=1):
+		cadeia = descricao_overflow(folha)
+		print("Folha " + str(i) + " primária: " + str(folha.registros) + " | overflow: " + str(cadeia))
 
-# exibição de nós
-print("páginas folha primárias:")
-print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
+	media_todas, media_com_overflow = metricas_cadeia_overflow(arvore)
+	print("\nMétricas:")
+	print("- Quantidade de páginas folha: " + str(arvore.quantidade_paginas_folha()))
+	print("- Quantidade de páginas overflow: " + str(arvore.quantidade_paginas_overflow()))
+	print("- Tamanho médio das cadeias (todas as folhas): " + f"{media_todas:.2f}")
+	print("- Tamanho médio das cadeias (folhas com overflow): " + f"{media_com_overflow:.2f}")
 
-print("páginas overflow:")  # --- PRECISA MELHORAR ISSO AQUI --
-print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.registros, folha_D.overflow.registros, folha_E.overflow.registros, folha_F.overflow.registros, folha_F.overflow.proximo.registros, folha_F.overflow.proximo.proximo.registros)
+def imprimir_percurso_igualdade(arvore, chave):
+	encontrado, custo, ordem = arvore.busca_por_igualdade(chave)
+	print("\nExemplo de percurso - busca por igualdade(" + str(chave) + ")")
+	print("Páginas visitadas, na ordem:")
+	for i, pagina in enumerate(ordem, start=1):
+		print(str(i) + ". " + str(pagina))
+	print("Custo aproximado (nós/páginas percorridos): " + str(custo))
+	print("Resultado: " + ("encontrado" if encontrado else "não encontrado"))
 
-# testar métricas após inserção
-print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
-print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
+def imprimir_percurso_intervalo(arvore, ini, fim):
+	custo, resultados = arvore.busca_por_intervalo(ini, fim)
+	percurso = percurso_intervalo_config_atual(arvore)
+	print("\nExemplo de percurso - busca por intervalo(" + str(ini) + ", " + str(fim) + ")")
+	print("Páginas visitadas, na ordem:")
+	for i, pagina in enumerate(percurso, start=1):
+		print(str(i) + ". " + str(pagina))
+	print("Custo aproximado (nós/páginas percorridos): " + str(custo))
+	print("Resultado: " + str(sorted(resultados)))
 
-# testes de busca 
-print("\nbusca por igualdade:")
-print(arvore.busca_por_igualdade(18))
-print(arvore.busca_por_igualdade(22))
-print(arvore.busca_por_igualdade(145))
-print("\nbusca por intervalo:")
-print(arvore.busca_por_intervalo(27, 44))
+def main():
+	arvore = ISAM()
 
-# teste de remover registros
-arvore.remover_registro(86)
-arvore.remover_registro(121)
-arvore.remover_registro(200)
+	imprimir_estado(arvore, "ESTADO INICIAL")
 
-# exibição de nós
-print("páginas folha primárias:")
-print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
+	print("\nAplicando inserções obrigatórias...")
+	for chave in INSERCOES_OBRIGATORIAS:
+		arvore.adicionar_registro(chave)
+	imprimir_estado(arvore, "APÓS INSERÇÕES OBRIGATÓRIAS")
 
-print("páginas overflow:")  # --- PRECISA MELHORAR ISSO AQUI --
-print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.registros, folha_D.overflow.registros, folha_E.overflow, folha_F.overflow.registros, folha_F.overflow.proximo.registros, folha_F.overflow.proximo.proximo)
+	print("\nAplicando remoções obrigatórias...")
+	removidos_efetivos = 0
+	for chave in REMOCOES_OBRIGATORIAS:
+		antes = contar_ocorrencias(arvore, chave)
+		arvore.remover_registro(chave)
+		depois = contar_ocorrencias(arvore, chave)
+		if depois == max(antes - 1, 0):
+			removidos_efetivos += 1
+	imprimir_estado(arvore, "APÓS REMOÇÕES OBRIGATÓRIAS")
+	print("- Quantidade de registros removidos (efetivos): " + str(removidos_efetivos))
 
-# testar métricas após remoção
-print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
-print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
+	print("\nBuscas obrigatórias para medição de custo")
+	for chave in BUSCAS_IGUALDADE:
+		encontrado, custo, _ = arvore.busca_por_igualdade(chave)
+		print("- buscar(" + str(chave) + "): custo=" + str(custo) + ", encontrado=" + str(encontrado))
 
-# adicionar registro após exclusão
-arvore.adicionar_registro(145)
+	for ini, fim in BUSCAS_INTERVALO:
+		custo, resultados = arvore.busca_por_intervalo(ini, fim)
+		print("- buscar_intervalo(" + str(ini) + ", " + str(fim) + "): custo=" + str(custo) + ", resultados=" + str(sorted(resultados)))
 
-# exibição de nós
-print("páginas folha primárias:")
-print(folha_A.registros, folha_B.registros, folha_C.registros, folha_D.registros, folha_E.registros, folha_F.registros)
+	# Explicação pedida no enunciado: caminho de uma igualdade e de um intervalo.
+	imprimir_percurso_igualdade(arvore, 22)
+	imprimir_percurso_intervalo(arvore, 20, 50)
 
-print("páginas overflow:")  # --- PRECISA MELHORAR ISSO AQUI --
-print(folha_A.overflow.registros, folha_B.overflow.registros, folha_C.overflow.registros, folha_D.overflow.registros, folha_E.overflow, folha_F.overflow.registros, folha_F.overflow.proximo.registros, folha_F.overflow.proximo.proximo)
-
-# testar métricas após remoção
-print("\nquantidade de páginas folha primárias: ", arvore.quantidade_paginas_folha())
-print("quantidade de páginas de overflow: ", arvore.quantidade_paginas_overflow())
-
-# testes de busca após remoção
-print("\nbusca por igualdade:")
-print(arvore.busca_por_igualdade(18))
-print(arvore.busca_por_igualdade(22))
-print(arvore.busca_por_igualdade(145))
-print("\nbusca por intervalo:")
-print(arvore.busca_por_intervalo(27, 44))
+if __name__ == "__main__":
+	main()

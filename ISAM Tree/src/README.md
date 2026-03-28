@@ -10,7 +10,8 @@ com eficiência.
 
 O foco da atividade está na observação do comportamento da estrutura pormeio de inserções, remoções e buscas, com atenção especial ao surgimento e ao crescimento das páginas de overflow.
 
-O material de apoio caracteriza o ISAM como uma estrutura estática: as páginas de índice permanecem fixas, enquanto as atualizaçõesafetam apenas as páginas folha e suas possíveis páginas de overflow. Essa característica deve orientar toda a modelagem do trabalho.
+O material de apoio caracteriza o ISAM como uma estrutura estática: as páginas de índice permanecem fixas, enquanto as atualizações afetam apenas as páginas folha e suas possíveis páginas de overflow. Essa característica deve orientar toda a modelagem do trabalho.
+
 ## 1. Objetivo
 Implementar uma simulação funcional de um índice ISAM para registros, permitindo analisar como a estrutura se comporta diante de um conjunto fixo de operações de inserção, remoção e busca. Ao final, o grupo deverá ser capaz de explicar o percurso realizado nas
 buscas e o impacto do overflow no custo das operações.
