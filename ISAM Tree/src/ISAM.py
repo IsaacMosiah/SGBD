@@ -37,7 +37,7 @@ class ISAM:
     # funções para percorrer a árvore
     def get_filho(self, chaves, rec):
         for i in range(len(chaves)):
-            if rec <= chaves[i]:
+            if rec < chaves[i]:
                 return i
         return len(chaves)
     
@@ -54,8 +54,9 @@ class ISAM:
     def adicionar_registro(self, rec):
         no = self.buscar_no(rec)
 
-        if len(no.registros) == no.CAPACIDADE: # página folha lotada
-            if not no.overflow: #não há overflow
+        # página folha lotada
+        if len(no.registros) == no.CAPACIDADE:
+            if not no.overflow:
                 new_ovflw = PaginaOverflow()
                 new_ovflw.registros.append(rec)
                 no.overflow = new_ovflw
@@ -74,7 +75,6 @@ class ISAM:
                     # se não tem espaço, verifica se há outro nó de overflow
                     if not ovflw.proximo:
                         break
-                    
                     ovflw = ovflw.proximo
 
                 new_ovflw = PaginaOverflow()
@@ -84,6 +84,11 @@ class ISAM:
 
         else:
             no.registros.append(rec)
+            # se a página de folha primária está cheia, verificamos se está corretamente ordenada
+            if len(no.registros) == no.CAPACIDADE:
+                if no.registros[1] < no.registros[0]:
+                    no.registros[0], no.registros[1] = no.registros[1], no.registros[0]
+
             print("Registro " + str(rec) + " adicionado em página folha primária.")
 
     def remover_registro(self, rec):
